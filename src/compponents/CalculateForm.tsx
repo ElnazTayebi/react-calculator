@@ -6,10 +6,64 @@ const CalculateForm = () => {
     const [previousValue, setPreviousValue] = useState<string | null>(null);
     const [operator, setOperator] = useState<string | null>(null);
     const [memoryValue, setMemoryValue] = useState(0);
-    const [decimalPercision, setDecimalPercision] = useState(2);
+    const [decimalPrecision, setDecimalPrecision] = useState(2);
 
-    
+    const handleNumber = (num: string) => {
+        setCurrentValue((prev) => (prev === "0" ? num : prev + num));
+    };
 
+    const handleOperator = (op: string) => {
+        if(currentValue === "0") 
+            return;
+        setPreviousValue(currentValue);
+        setOperator(op);
+        setCurrentValue("0");
+    };
+
+    const handleEquals = () => {
+        if(previousValue === null || operator === null) return;
+
+        const prev = parseFloat(previousValue);
+        const current = parseFloat(currentValue);
+
+            let result = 0;
+
+            switch (operator) {
+                case "+":
+                    result = prev + current;
+                    break;
+
+                case "-":
+                    result = prev - current;
+                    break;  
+                case "*":
+                    result = prev * current;
+                    break;
+                case "/":
+                    if (current === 0) {
+                        setCurrentValue("Error");
+                        return;
+        }
+        result = prev / current;
+        break;  
+            default:
+                return;
+            }
+            const formatted = result.toFixed(decimalPrecision);
+            setCurrentValue(formatted);
+            setPreviousValue(null);
+            setOperator(null);
+    };  
+
+    const handleClear = () => {
+        setCurrentValue("0");
+        setPreviousValue(null);
+        setOperator(null);
+    };
+
+    const handleDecimal = () => {
+        setCurrentValue((prev) => (prev.includes(".") ? prev : prev + "."));
+    };
         return (
             <div className="flex items-center justify-center min-h-screen bg-emerald-100">
 
@@ -23,7 +77,7 @@ const CalculateForm = () => {
 
                     {/* Display */}
                     <div className="bg-gray-100 text-right text-2xl font-semibold p-4 rounded-lg mb-4 overflow-hidden truncate">
-                        123.45
+                        {currentValue}  
                     </div>
 
                     {/* Decimal Range */}
